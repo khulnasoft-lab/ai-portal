@@ -1,29 +1,21 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules
-.pnp
+/node_modules
+/.pnp
 .pnp.js
 
 # testing
-coverage
-test-results
+/coverage
+/test-results
 
 # next.js
-.next/
-out/
-build
-.swc/
-
-# Docusaurus
-.docusaurus
-.cache-loader
-
-# Sentry
-.sentryclirc
+/.next/
+/out/
+/dist
 
 # production
-build/
+/build
 
 # misc
 .DS_Store
@@ -39,22 +31,16 @@ yarn-error.log*
 .env
 .env*.local
 
-# turbo
-.turbo
-
-# Sentry Auth Token
-.sentryclirc
-
-# Vercel
+# vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 .idea
+pnpm-lock.yaml
 
 # ide
 .vscode/
 
-# Localazy
-localazy.keys.json
+*.json
