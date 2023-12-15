@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./apps/unsaged/public/icon-256.svg" alt="unSAGED logo" width="200px">
+    <img src="./public/icon-256.svg" alt="unSAGED logo" width="200px">
 </p>
 
 [![Join our Discord](https://discordapp.com/api/guilds/1124558062171209771/widget.png?style=banner2)](https://discord.gg/rMH2acSEzq)
@@ -9,21 +9,26 @@
 unSAGED is a cutting-edge chat kit engineered for seamless interaction with AI models. It allows you to easily have conversations with different AI models from a variety of providers, all in one place. It also allows you to manage multiple users and conversations, and synchronize them across different devices.
 Leveraging the power of Next.js and Supabase, it offers a user-friendly and robust interface for engaging with AI models from a variety of providers.
 
-You can use it live at [app.unsaged.com](https://app.unsaged.com). Just make sure not to put in personal information as your conversations will be stored in Postgres (Supabase) until you delete them.
+You can use it live at [unsaged.com](https://unsaged.com). Just make sure not to put in personal information as your conversations will be stored in Postgres (Supabase) until you delete them.
 
 - [🎉 Welcome to unSAGED](#-welcome-to-unsaged)
-  - [🚧 Installation](#-installation)
   - [🌟 Key Features](#-key-features)
   - [🤖 Supported AI Models](#-supported-ai-models)
-  - [🚀 Upgrading unSAGED](#-upgrading-unsaged)
+  - [🚧 Getting Started with unSAGED](#-getting-started-with-unsaged)
+    - [Step 1. Clone the Repository](#step-1-clone-the-repository)
+    - [Step 2. Generate Supabase Tables](#step-2-generate-supabase-tables)
+    - [Step 3. Expose the next_auth schema](#step-3-expose-the-next_auth-schema)
+    - [Step 4. Create your auth secret](#step-4-create-your-auth-secret)
+    - [Step 5. Create a .env.local file](#step-5-create-a-envlocal-file)
+    - [Step 6. Install Dependencies](#step-6-install-dependencies)
+    - [Step 7. Run App](#step-7-run-app)
+    - [(Optional) Step 8. Provide API Keys in .env.local](#optional-step-8-provide-api-keys-in-envlocal)
+  - [⚙️ Configuration](#️-configuration)
+    - [Env Variables](#env-variables)
   - [📝 License](#-license)
   - [🤝 How to Contribute](#-how-to-contribute)
   - [📸 Screenshots](#-screenshots)
   - [📚 Built With](#-built-with)
-
-## 🚧 Installation
-
-Follow the installation instructions in the [Getting Started](https://unsaged.com/docs/getting-started/installation) section of the documentation.
 
 ## 🌟 Key Features
 
@@ -47,20 +52,160 @@ Follow the installation instructions in the [Getting Started](https://unsaged.co
   - GPT-3.5-Turbo, GPT-3.5-Turbo-16k
   - GPT-4, GPT-4-32k
 - **[Ollama](https://github.com/jmorganca/ollama)**
-  - Llama2-7b, Llama2-13b, Llama2-70b, goliath, llama2-uncensored
+  - Llama2-7b, Llama2-13b, Llama2-70b
   - Codellama-7b, Codellama-13b, Codellama-70b
   - Wizard-7b, Wizard-13b, Wizard-34b
   - Phind-Codellama
-  - Mistral, Mistral-OpenOrca, neural-chat
-  - openchat
-  - orca-mini
-  - vicuna
-  - deepseek-coder-1b, deepseek-coder-6.7b, deepseek-coder-33b
+  - Mistral, Mistral-OpenOrca
 
-## 🚀 Upgrading unSAGED
+## 🚧 Getting Started with unSAGED
 
-* On November 13th, 2023, we released a major update to unSAGED, which introduced more settings to the conversation. It requires that you update some database table columns. If you are upgrading from a version of unSAGED released before this date, you will need to run the [Upgrade Script](./apps/unsaged/db/UpgradeScript.sql) in the [Supabase SQL editor](https://app.supabase.com/project/_/sql).
-* On November 16th, 2023, we released a major update to unSAGED, which converts this repo into monorepo to support the documentation website. It requires that you change a setting in your Vercel project, if you have one. If you do have one, you need to set `apps/unsaged` as the [Root Directory](https://vercel.com/docs/deployments/configure-a-build#root-directory) in your Vercel project's settings.
+### Step 1. Clone the Repository
+
+```sh
+git clone https://github.com/jorge-menjivar/unSAGED.git
+```
+
+### Step 2. Generate Supabase Tables
+
+Run the [Generation Script](./GenerationScript.sql) in the [Supabase SQL editor](https://app.supabase.com/project/_/sql).
+
+This will do the following:
+
+- Create the tables required by unSAGED.
+- Create the authentication schema and tables required by NextAuth.js.
+- Enable Row Level Security for the tables required by unSAGED.
+- Apply the Row Level Security policies required by unSAGED.
+
+### Step 3. Expose the next_auth schema
+
+Expose the next_auth schema in the [API settings](https://app.supabase.com/project/*/settings/api) by adding next_auth to the "Exposed schemas" list.
+
+More information [here](https://authjs.dev/reference/adapter/supabase#expose-the-nextauth-schema-in-supabase).
+
+### Step 4. Create your auth secret
+
+Create your secret with the following command:
+
+```sh
+openssl rand -base64 32
+```
+
+copy the output and save it for the next step.
+
+### Step 5. Create a .env.local file
+
+Create a `.env.local` file and set the following variable:
+
+```sh
+NEXTAUTH_SECRET=your_secret_from_step_4
+```
+
+### Step 6. Install Dependencies
+
+```sh
+npm i
+```
+
+### Step 7. Run App
+
+Run Locally:
+
+```sh
+npm run dev
+```
+
+Or run with Docker:
+
+```sh
+docker build -t unsaged . --rm
+docker run --env-file=.env.local -p 127.0.0.1:3000:3000 --name unsaged unsaged
+```
+
+### (Optional) Step 8. Provide API Keys in .env.local
+
+To give everyone using your instance of unSAGED access to any API key, create a `.env.local` file and set the appropriate environment variables.
+If you do not provide an API key in the env file, users will have to provide their own key.
+
+## ⚙️ Configuration
+
+When deploying the application, the following environment variables can be set:
+
+### Env Variables
+
+| Required  | Environment Variable                        | Default value                                       | Description                                                                                                                                                                                                                                |
+| --------- | ------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| No        | NEXT_PUBLIC_DEBUG_MODE                      | `false`                                             | Enables debug mode, which prints env variables to the terminal and console. Useful when debugging docker.                                                                                                                                  |
+| No        | OPENAI_API_KEY                              |                                                     | The default API key used for authenticating with OpenAI. [Get Key](https://platform.openai.com/account/api-keys)                                                                                                                           |
+| No        | OPENAI_API_URL                              | `https://api.openai.com/v1`                         | The base url, for Azure use `https://<endpoint>.openai.azure.com`                                                                                                                                                                          |
+| No        | OPENAI_API_TYPE                             | `openai`                                            | The API type, options are `openai` or `azure`                                                                                                                                                                                              |
+| No        | OPENAI_API_VERSION                          | `2023-03-15-preview`                                | Only applicable for Azure OpenAI                                                                                                                                                                                                           |
+| No        | OPENAI_ORGANIZATION                         |                                                     | Your OpenAI organization ID                                                                                                                                                                                                                |
+| No        | ANTHROPIC_API_URL                           | `https://api.anthropic.com/v1`                      | The base url for the Anthropic API. [Get Key](https://www.anthropic.com/earlyaccess)                                                                                                                                                       |
+| No        | ANTHROPIC_API_KEY                           |                                                     | The default API key used for authenticating with Anthropic. See [Versioning](https://docs.anthropic.com/claude/reference/versioning)                                                                                                       |
+| No        | ANTHROPIC_API_VERSION                       | `2023-06-01`                                        | The version of the Anthropic API                                                                                                                                                                                                           |
+| No        | PALM_API_URL                                | `https://generativelanguage.googleapis.com/v1beta2` | The base url for the PALM 2 API from Google                                                                                                                                                                                                |
+| No        | PALM_API_KEY                                |                                                     | The default API key used for authenticating with PaLM 2. [Get Key](https://developers.generativeai.google/products/palm)                                                                                                                   |
+| No        | OLLAMA_HOST                                 |                                                     | Example: `http://127.0.0.1:11434`. The base url for Ollama. Be aware that Vercel doesn´t allow direct IP access in edge functions so you will need to create some sort of subdomain/domain for your Ollama instance if you want to use it. |
+| No        | OLLAMA_BASIC_USER                           |                                                     | Can be used if you´re ollama server is protected with HTTP Basic auth.                                                                                                                                                                     |
+| No        | OLLAMA_BASIC_PWD                            |                                                     | Can be used if you´re ollama server is protected with HTTP Basic auth.                                                                                                                                                                     |
+| No        | NEXT_PUBLIC_DEFAULT_OPENAI_SYSTEM_PROMPT    | Defined in [constants file](./utils/app/const.ts)   | The default system prompt to use on new conversations for OpenAI models.                                                                                                                                                                   |
+| No        | NEXT_PUBLIC_DEFAULT_ANTHROPIC_SYSTEM_PROMPT | Defined in [constants file](./utils/app/const.ts)   | The default system prompt to use on new conversations for Anthropic models.                                                                                                                                                                |
+| No        | NEXT_PUBLIC_DEFAULT_PALM_SYSTEM_PROMPT      | Defined in [constants file](./utils/app/const.ts)   | The default system prompt to use on new conversations for PaLM 2 models.                                                                                                                                                                   |
+| No        | NEXT_PUBLIC_DEFAULT_OLLAMA_SYSTEM_PROMPT    | Defined in [constants file](./utils/app/const.ts)   | The default system prompt to use on new conversations for Ollama models.                                                                                                                                                                   |
+| No        | NEXT_PUBLIC_DEFAULT_MODEL                   | `gpt-3.5-turbo`                                     | The default model to use on new conversations                                                                                                                                                                                              |
+| No        | NEXT_PUBLIC_DEFAULT_TEMPERATURE             | 0.7                                                 | The default temperature to use for conversations.                                                                                                                                                                                          |
+| Yes       | NEXT_PUBLIC_SUPABASE_URL                    |                                                     | The project URL.                                                                                                                                                                                                                           |
+| Yes       | NEXT_PUBLIC_SUPABASE_ANON_KEY               |                                                     | The supabase project anon key.                                                                                                                                                                                                             |
+| Yes       | SUPABASE_SERVICE_ROLE_KEY                   |                                                     | The supabase project service role key.                                                                                                                                                                                                     |
+| Yes       | SUPABASE_JWT_SECRET                         |                                                     | **Warning!** Generating a new JWT Secret may invalidate other supabase tokens.                                                                                                                                                             |
+| No        | EDGE_CONFIG                                 |                                                     | Create a Vercel Edge Config Store, add "NEXTAUTH_EMAIL_PATTERNS": "`.+@mydomain.com`" this will overried the `NEXTAUTH_EMAIL_PATTERN` environment variable                                                                                 |
+| No        | NEXTAUTH_EMAIL_PATTERN                      |                                                     | The email regex pattern granted access to unSAGED. For example `.+@mydomain.com`                                                                                                                                                           |
+| Yes       | NEXTAUTH_SECRET                             |                                                     | NextAuth Settings. See [Documentation](https://next-auth.js.org/configuration/options#nextauth_secret)                                                                                                                                     |
+| In prod.  | NEXTAUTH_URL                                | `http://localhost:3000`                             | NextAuth Settings. See [Documentation](https://next-auth.js.org/configuration/options#nextauth_url)                                                                                                                                        |
+| In docker | NEXTAUTH_URL_INTERNAL                       |                                                     | NextAuth Settings. See [Documentation](https://next-auth.js.org/configuration/options#nextauth_url_internal).                                                                                                                              |
+| Yes       | \<PROVIDER\>\_CLIENT_ID                     |                                                     | Provider OAuth Client ID                                                                                                                                                                                                                   |
+| Yes       | \<PROVIDER\>\_CLIENT_SECRET                 |                                                     | Provider OAuth Client Secret                                                                                                                                                                                                               |
+| Maybe     | \<PROVIDER\>\_ISSUER                        |                                                     | Provider Issuer URL (Only some providers need this)                                                                                                                                                                                        |
+| No        | EMAIL_SERVER                                |                                                     | Example: `smtp://username:password@smtp.example.com:587`. Email Provider Mail Server                                                                                                                                                       |
+| No        | EMAIL_FROM                                  |                                                     | Example: `noreply@example.com`. Email Provider From address Server                                                                                                                                                                         |
+
+Where \<PROVIDER\> is one of the following:
+
+- APPLE
+- AUTH0
+- COGNITO
+- DISCORD
+- FACEBOOK
+- GITHUB
+- GITLAB
+- GOOGLE
+- OKTA
+- REDDIT
+- SALESFORCE
+- SLACK
+- SPOTIFY
+- TWITCH
+- TWITTER
+
+For example, to enable Google and Github authentication, you would add the following to your `.env.local` file:
+
+```sh
+GITHUB_CLIENT_ID=xxxxxxxxxxxxx
+GITHUB_CLIENT_SECRET=xxxxxxxxxxxxx
+GOOGLE_CLIENT_ID=xxxxxxxxxxxxx
+GOOGLE_CLIENT_SECRET=xxxxxxxxxxxx
+```
+
+For Auth0, you would add the following:
+
+```sh
+AUTH0_CLIENT_ID=xxxxxxxxxxxxx
+AUTH0_CLIENT_SECRET=xxxxxxxxxxxxx
+AUTH0_ISSUER=https://mydomain.us.auth0.com
+```
+
+To enable the Ollama models running locally (llama2, codellama, wizard, etc.) check `https://ollama.ai/`.
 
 ## 📝 License
 
@@ -74,13 +219,15 @@ We welcome contributions to the unSAGED project! If you're interested in contrib
 
 ## 📸 Screenshots
 
-![Screenshot-1](./apps/unsaged/public/screenshots/screenshot-1.png)
+![Screenshot-1](./public/screenshots/screenshot-1.png)
 
-![Screenshot-2](./apps/unsaged/public/screenshots/screenshot-2.png)
+![Screenshot-2](./public/screenshots/screenshot-2.png)
 
-![Screenshot-4](./apps/unsaged/public/screenshots/screenshot-4.png)
+![Screenshot-3](./public/screenshots/screenshot-3.png)
 
-![Screenshot-5](./apps/unsaged/public/screenshots/screenshot-5.png)
+![Screenshot-4](./public/screenshots/screenshot-4.png)
+
+![Screenshot-5](./public/screenshots/screenshot-5.png)
 
 ## 📚 Built With
 
